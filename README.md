@@ -12,25 +12,28 @@ Es **autónomo**: no depende de ningún otro plugin para funcionar. Si tenés in
 
 ## Instalación
 
-1. Cloná el repo donde quieras tenerlo:
+Dos comandos, directo desde el repo de GitHub (no hace falta clonar nada a mano):
 
 ```bash
-git clone git@github.com:JesusAraujoDEV/estibador.git
+claude plugin marketplace add https://github.com/JesusAraujoDEV/estibador
+claude plugin install estibador@estibador
 ```
 
-2. Agregalo como marketplace/plugin local de Claude Code:
+Esto lo instala a nivel de usuario (`scope: user`), o sea que queda disponible en **cualquier proyecto** sin repetir el paso. Listo. Ya tenés el agente `estibador` y el comando `/estibador:deploy`.
+
+> Si preferís tenerlo clonado localmente en vez de apuntar a GitHub:
+> ```bash
+> git clone https://github.com/JesusAraujoDEV/estibador.git
+> claude plugin marketplace add /ruta/a/estibador
+> claude plugin install estibador@estibador
+> ```
+
+Para actualizarlo cuando salga una versión nueva:
 
 ```bash
-claude plugin marketplace add /ruta/a/estibador
+claude plugin marketplace update estibador
+claude plugin update estibador
 ```
-
-3. Instalá el plugin:
-
-```bash
-claude plugin install estibador
-```
-
-4. Listo. Ya tenés disponible el agente `estibador` y el comando `/estibador:deploy`.
 
 ## Uso
 
@@ -62,8 +65,9 @@ Si el deploy falla, ahí sí te va a pedir usuario/contraseña SSH para revisar 
 
 ```
 estibador/
-  .claude-plugin/plugin.json     → manifiesto del plugin
-  agents/estibador.md            → definición del agente
-  commands/deploy.md             → comando /estibador:deploy
-  skills/dokploy-ssh-deploy/     → runbook técnico + script de deploy (PowerShell)
+  .claude-plugin/plugin.json       → manifiesto del plugin
+  .claude-plugin/marketplace.json  → declara el repo como marketplace instalable
+  agents/estibador.md              → definición del agente
+  commands/deploy.md               → comando /estibador:deploy
+  skills/dokploy-ssh-deploy/       → runbook técnico + script de deploy (PowerShell)
 ```
