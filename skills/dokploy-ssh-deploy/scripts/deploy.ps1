@@ -13,7 +13,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$DokployUrl = if ($env:DOKPLOY_URL) { $env:DOKPLOY_URL } else { "https://tu-panel-dokploy.example" }
+$DokployUrl = $env:DOKPLOY_URL
 $ApiKey = $env:DOKPLOY_API_KEY
 $ApiBase = "$DokployUrl/api/trpc"
 
@@ -24,6 +24,9 @@ function Invoke-Dokploy {
         [hashtable]$Body = $null
     )
 
+    if (-not $DokployUrl) {
+        throw "DOKPLOY_URL no definida. Exporta: `$env:DOKPLOY_URL = '<url-de-tu-panel>'"
+    }
     if (-not $ApiKey) {
         throw "DOKPLOY_API_KEY no definida. Pide la API key al usuario y exporta: `$env:DOKPLOY_API_KEY = '<token>'"
     }

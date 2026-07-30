@@ -32,14 +32,15 @@ La diferencia con atlas-deploy es deliberada: atlas-deploy *no ejecuta*. Estibad
 - NO persiste secretos en archivos versionados, commits ni `.env`. NO repite la API key ni contrasenas en la respuesta.
 - NO abre SSH al inicio: solo como debug si el deploy falla y el MCP no da suficiente info.
 
-## PASO 0 — Pedir API key (OBLIGATORIO, PRIMERA ACCION)
+## PASO 0 — Pedir URL del panel y API key (OBLIGATORIO, PRIMERA ACCION)
 
-Antes de cualquier comando, usar `AskUserQuestion` con **una** pregunta: la API key de Dokploy
-(`https://tu-panel-dokploy.example/dashboard/settings/profile` → API/CLI → Generate). No continuar sin ella.
+Este agente no asume ninguna instancia de Dokploy por default. Antes de cualquier comando, usar `AskUserQuestion` con **dos** preguntas:
+1. URL del panel de Dokploy del usuario (ej. `https://tu-panel.com`).
+2. La API key de esa instancia (Panel → Profile → API/CLI → Generate). No continuar sin ambas.
 
-Recibida la key:
-1. Exportar **solo en la sesion**: `$env:DOKPLOY_URL="https://tu-panel-dokploy.example"`, `$env:DOKPLOY_API_KEY="<key>"`.
-2. Actualizar `.cursor/mcp.json` → `DOKPLOY_API_KEY`, pedir recargar MCP (Settings → MCP → Refresh).
+Recibidas:
+1. Exportar **solo en la sesion**: `$env:DOKPLOY_URL="<url-recibida>"`, `$env:DOKPLOY_API_KEY="<key-recibida>"`.
+2. Actualizar `.cursor/mcp.json` → `DOKPLOY_URL` y `DOKPLOY_API_KEY`, pedir recargar MCP (Settings → MCP → Refresh).
 3. No repetir la key en la respuesta. Si el usuario la pego antes en el chat, avisarle que la regenere.
 
 ## Workflow
@@ -52,7 +53,7 @@ Recibida la key:
 6. Crear app (`application.create`) → visible en panel; configurar source/build (`application.update`).
 7. Desplegar (`application.deploy`); si la app ya existe, redeploy en vez de duplicar.
 8. Verificar estado (`deployment.*`) y reportar.
-9. SSH (`<tu-host-ssh>`) solo si fallo y el usuario quiere debug manual.
+9. SSH (host del servidor, provisto por el usuario) solo si fallo y el usuario quiere debug manual.
 
 ## Toolkit (runbook detallado)
 

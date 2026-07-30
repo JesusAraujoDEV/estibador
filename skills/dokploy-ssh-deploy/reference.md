@@ -4,9 +4,9 @@
 
 | Campo | Valor |
 |-------|-------|
-| Panel | https://tu-panel-dokploy.example |
-| API | https://tu-panel-dokploy.example/api/trpc |
-| SSH host | <tu-host-ssh> |
+| Panel | `<tu-panel>` (ej. `https://tu-panel.com`) — lo aporta el usuario, no hay default |
+| API | `<tu-panel>/api/trpc` |
+| SSH host | `<tu-host-ssh>` — lo aporta el usuario, solo para debug si falla el deploy |
 | MCP package | [@dokploy/mcp](https://github.com/Dokploy/mcp) |
 
 ## MCP — Configuración en Cursor (Windows)
@@ -20,7 +20,7 @@ Archivo: `.cursor/mcp.json`
       "command": "cmd",
       "args": ["/c", "npx", "-y", "@dokploy/mcp"],
       "env": {
-        "DOKPLOY_URL": "https://tu-panel-dokploy.example",
+        "DOKPLOY_URL": "<url-del-panel-del-usuario>",
         "DOKPLOY_API_KEY": "<api-key-del-usuario>",
         "DOKPLOY_ENABLED_TAGS": "project,application,deployment,domain,compose"
       }
@@ -33,7 +33,7 @@ Variables de entorno del MCP:
 
 | Variable | Requerido | Descripción |
 |----------|-----------|-------------|
-| `DOKPLOY_URL` | Sí | `https://tu-panel-dokploy.example` |
+| `DOKPLOY_URL` | Sí | URL del panel de Dokploy del usuario, sin default |
 | `DOKPLOY_API_KEY` | Sí | Token del panel → Profile → API/CLI |
 | `DOKPLOY_ENABLED_TAGS` | No | Filtrar categorías de tools |
 | `DOKPLOY_TIMEOUT` | No | Timeout ms (default 30000) |
@@ -52,14 +52,14 @@ Descubrir tools: `GetMcpTools` → `server: "dokploy-mcp"`
 
 ## API key
 
-Generar en: https://tu-panel-dokploy.example/dashboard/settings/profile → API/CLI → Generate
+Generar en: `<tu-panel>/dashboard/settings/profile` → API/CLI → Generate
 
 Header: `x-api-key: <token>` (no `Authorization: Bearer`)
 
 ## API curl (respaldo)
 
 ```powershell
-$env:DOKPLOY_URL = "https://tu-panel-dokploy.example"
+$env:DOKPLOY_URL = "<url-del-panel-del-usuario>"
 $env:DOKPLOY_API_KEY = "<token>"
 
 # Listar proyectos
@@ -89,4 +89,3 @@ curl.exe -s -X POST "$env:DOKPLOY_URL/api/trpc/application.deploy" `
 ## Links
 
 - [Dokploy MCP GitHub](https://github.com/Dokploy/mcp)
-- [Panel Dokploy](https://tu-panel-dokploy.example/)

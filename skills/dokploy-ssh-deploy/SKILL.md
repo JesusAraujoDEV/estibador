@@ -1,66 +1,68 @@
 ---
 name: dokploy-ssh-deploy
-description: Despliega en Dokploy usando el MCP oficial (@dokploy/mcp) con URL https://tu-panel-dokploy.example. Al iniciar, muestra un formulario AskQuestion pidiendo solo la API key, crea aplicaciones y despliega el proyecto actual. Usa cuando el usuario pida deploy en Dokploy, desplegar con skills, o crear aplicación en el panel vía terminal.
+description: Despliega en Dokploy usando el MCP oficial (@dokploy/mcp) contra la URL de panel que indique el usuario. Al iniciar, muestra un formulario AskQuestion pidiendo la URL del panel y la API key, crea aplicaciones y despliega el proyecto actual. Usa cuando el usuario pida deploy en Dokploy, desplegar con skills, o crear aplicación en el panel vía terminal.
 ---
 
 # Dokploy SSH Deploy
 
-Despliega el proyecto actual en Dokploy **sin usar la UI**. Solo necesitas la **API key** — el MCP hace todo (crear app, deploy, dominios, logs vía API).
+Despliega el proyecto actual en Dokploy **sin usar la UI**. Solo necesitas la **URL de tu panel** y la **API key** — el MCP hace todo (crear app, deploy, dominios, logs vía API).
 
-Panel: [https://tu-panel-dokploy.example/](https://tu-panel-dokploy.example/)
 MCP: [https://github.com/Dokploy/mcp](https://github.com/Dokploy/mcp)
 
-## PASO 0 — Pedir API key en input (OBLIGATORIO, PRIMERA ACCIÓN)
+## PASO 0 — Pedir URL del panel y API key (OBLIGATORIO, PRIMERA ACCIÓN)
 
-**ANTES de cualquier comando o deploy: usar `AskQuestion` para pedir la API key.**
+**ANTES de cualquier comando o deploy: usar `AskQuestion` para pedir la URL del panel y la API key.**
 
-Con la API key + MCP no se necesita SSH. El MCP expone toda la API de Dokploy (crear proyectos, apps, deploy, logs).
+Este agente no asume ninguna instancia de Dokploy por default — cada usuario tiene la suya. Con la URL + API key + MCP no se necesita SSH. El MCP expone toda la API de Dokploy (crear proyectos, apps, deploy, logs).
 
 ### Formulario obligatorio (AskQuestion)
 
-Llamar a `AskQuestion` con **1 pregunta**:
+Llamar a `AskQuestion` con **2 preguntas**:
 
 ```
 title: "Credenciales Dokploy Deploy"
 
-Pregunta 1 — id: "api_key"
-  prompt: "API key de Dokploy (https://tu-panel-dokploy.example → Profile → API/CLI → Generate)"
+Pregunta 1 — id: "panel_url"
+  prompt: "URL de tu panel de Dokploy (ej. https://tu-panel.com)"
+  options:
+    - id: "input", label: "Escribir URL"
+
+Pregunta 2 — id: "api_key"
+  prompt: "API key de tu instancia (Panel → Profile → API/CLI → Generate)"
   options:
     - id: "input", label: "Escribir API key"
 ```
 
-No continuar hasta recibir la API key.
+No continuar hasta recibir ambas.
 
-### Después de recibir la API key
+### Después de recibir la URL y la API key
 
 1. Guardar **solo en la sesión actual**:
    ```powershell
-   $env:DOKPLOY_URL = "https://tu-panel-dokploy.example"
+   $env:DOKPLOY_URL = "<respuesta panel_url>"
    $env:DOKPLOY_API_KEY = "<respuesta api_key>"
    ```
-2. Actualizar `.cursor/mcp.json` → `DOKPLOY_API_KEY` con la API key recibida
+2. Actualizar `.cursor/mcp.json` → `DOKPLOY_URL` y `DOKPLOY_API_KEY` con lo recibido
 3. Pedir al usuario recargar MCP: **Settings → MCP → Refresh**
 4. **No repetir** la API key en la respuesta al usuario
 
 ### SSH — solo opcional (si el deploy falla)
 
-**No pedir usuario ni contraseña SSH al inicio.** Solo pedirlas si:
+**No pedir usuario, contraseña ni host SSH al inicio.** Solo pedirlos si:
 - El deploy falla y hace falta revisar logs de Docker en el servidor
 - El MCP no puede leer logs y el usuario quiere debug manual
 
-En ese caso, pedir SSH en un segundo formulario AskQuestion.
-
-Host SSH (solo debug): `<tu-host-ssh>`
+En ese caso, pedir usuario/contraseña/host SSH en un segundo formulario AskQuestion — el host lo aporta el usuario, este agente no lo conoce de antemano.
 
 ### Reglas del formulario
 
-- **Siempre** usar `AskQuestion` al iniciar — pedir solo la API key
-- No ejecutar MCP, curl ni scripts hasta recibir la API key
+- **Siempre** usar `AskQuestion` al iniciar — pedir URL del panel y API key
+- No ejecutar MCP, curl ni scripts hasta recibir ambos datos
 - Opcionales (después del formulario): nombre de proyecto, nombre de app, dominio
 
 ### Cómo obtener la API key (si el usuario no la tiene)
 
-1. Entrar a [https://tu-panel-dokploy.example/dashboard/settings/profile](https://tu-panel-dokploy.example/dashboard/settings/profile)
+1. Entrar a `<tu-panel>/dashboard/settings/profile`
 2. Sección **API / CLI** → **Generate**
 3. Copiar el token (solo se muestra una vez) y pegarlo en el input del formulario
 
@@ -102,7 +104,7 @@ DOKPLOY_ENABLED_TAGS=project,application,deployment,domain,compose
 
 ```
 Task Progress:
-- [ ] 0. AskQuestion → API key (único input obligatorio)
+- [ ] 0. AskQuestion → URL del panel + API key
 - [ ] 1. Configurar mcp.json + recargar MCP
 - [ ] 2. GetMcpTools → dokploy-mcp
 - [ ] 3. Listar proyectos (project.*)
@@ -126,21 +128,16 @@ Task Progress:
 
 ## PASO 2 — SSH (opcional, solo debug)
 
-Solo si el deploy falla y el MCP no da suficiente info. Pedir usuario/contraseña SSH en ese momento, no al inicio.
-
-| Campo | Valor |
-|-------|-------|
-| Host SSH | `<tu-host-ssh>` |
-| Panel | `https://tu-panel-dokploy.example` |
+Solo si el deploy falla y el MCP no da suficiente info. Pedir host/usuario/contraseña SSH en ese momento, no al inicio — el usuario los aporta.
 
 ```powershell
-ssh <usuario>@<tu-host-ssh> "docker logs <container-id> --tail 80"
+ssh <usuario>@<host-del-usuario> "docker logs <container-id> --tail 80"
 ```
 
 ## PASO 3 — Respaldo con curl/script (si MCP no funciona)
 
 ```powershell
-$env:DOKPLOY_URL = "https://tu-panel-dokploy.example"
+$env:DOKPLOY_URL = "<url-del-panel-del-usuario>"
 $env:DOKPLOY_API_KEY = "<api-key-del-usuario>"
 
 curl.exe -s -H "x-api-key: $env:DOKPLOY_API_KEY" "$env:DOKPLOY_URL/api/trpc/project.all"
@@ -169,8 +166,8 @@ curl.exe -s -X POST "$env:DOKPLOY_URL/api/trpc/application.dropDeployment" `
 ## Reglas
 
 1. **MCP + API key es suficiente** — no pedir SSH al inicio
-2. API key: pedir con AskQuestion, poner en `.cursor/mcp.json`, nunca en commits
-3. URL fija: `https://tu-panel-dokploy.example`
+2. URL del panel y API key: pedir con AskQuestion, poner en `.cursor/mcp.json`, nunca en commits
+3. Sin URL fija — cada usuario apunta a su propia instancia
 4. SSH solo si falla el deploy y hace falta debug en el servidor
 5. Si la app existe, listar con MCP y redeploy en vez de duplicar
 6. Reportar: `applicationId`, URL del panel, estado del deployment
