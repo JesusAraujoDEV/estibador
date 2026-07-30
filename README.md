@@ -32,7 +32,7 @@ Para actualizarlo cuando salga una versión nueva:
 
 ```bash
 claude plugin marketplace update estibador
-claude plugin update estibador
+claude plugin update estibador@estibador
 ```
 
 ## Uso
@@ -45,10 +45,10 @@ Desde una sesión de Claude Code, en la carpeta del proyecto que querés despleg
 
 O simplemente pedile en el chat: *"desplegá esto en Dokploy"*.
 
-Lo primero que va a hacer es **pedirte la API key de Dokploy** por un formulario — no la escribas directo en el chat, dejá que te la pida así queda solo en la sesión y nunca se guarda en archivos versionados.
+Lo primero que va a hacer es pedirte, por un formulario, **la URL de tu panel de Dokploy y la API key** — no hay ninguna instancia asumida por default, cada quien apunta a la suya. No las escribas directo en el chat, dejá que te las pida así quedan solo en la sesión y nunca se guardan en archivos versionados.
 
 A partir de ahí él solo:
-1. Configura el MCP con tu key.
+1. Configura el MCP con tu URL y tu key.
 2. Detecta el tipo de build (`Dockerfile`, `docker-compose.yml`, `package.json`, o estáticos).
 3. Crea el proyecto/app en Dokploy si no existe (o hace redeploy si ya existe).
 4. Dispara el deploy y te confirma el estado — `applicationId`, URL del panel, resultado real.
