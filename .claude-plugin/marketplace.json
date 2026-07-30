@@ -1,0 +1,17 @@
+{
+  "name": "estibador",
+  "owner": {
+    "name": "jaraujo",
+    "email": "j2a0a0a5@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "estibador",
+      "source": "./",
+      "description": "Agente ejecutor de despliegues en Dokploy vía MCP oficial (@dokploy/mcp) o API. Autónomo: no forma parte del crew, pero adopta sus convenciones y consulta sus roles cuando la decisión los requiere.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["deploy", "dokploy", "devops", "mcp", "agent"]
+    }
+  ]
+}
