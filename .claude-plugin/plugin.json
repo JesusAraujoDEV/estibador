@@ -1,0 +1,11 @@
+{
+  "name": "estibador",
+  "version": "0.1.0",
+  "description": "Agente ejecutor de despliegues en Dokploy vía MCP oficial (@dokploy/mcp) o API. Autónomo: no forma parte del crew, pero adopta sus convenciones (dos modos, registro de chat, disciplina de estimacion) y consulta sus roles (atlas-deploy, security-compliance) cuando la decision los requiere. Invocable via /estibador:deploy.",
+  "author": {
+    "name": "jaraujo",
+    "email": "j2a0a0a5@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["deploy", "dokploy", "devops", "mcp", "agent"]
+}
