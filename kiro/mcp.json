@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "dokploy-mcp": {
+      "command": "npx",
+      "args": ["-y", "@dokploy/mcp"],
+      "env": {
+        "DOKPLOY_URL": "<URL_DE_TU_PANEL>",
+        "DOKPLOY_API_KEY": "<TU_API_KEY>",
+        "DOKPLOY_ENABLED_TAGS": "project,application,deployment,domain,compose"
+      },
+      "disabled": true
+    }
+  }
+}
